@@ -3,14 +3,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ashville.usermanagementsystem.services.CheckInService;
+import com.ashville.usermanagementsystem.services.CheckInServiceImpl;
 
 @RestController
-@RequestMapping("/api/checkin")
+@RequestMapping("/checkin")
 public class CheckInController {
 
     @Autowired
-    private CheckInService checkinService;
+    private CheckInServiceImpl checkinService;
 
     @PostMapping("/user/checkin/{userId}")
     public ResponseEntity<String> checkIn(@PathVariable Integer userId) {

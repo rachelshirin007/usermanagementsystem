@@ -1,12 +1,6 @@
 package com.ashville.usermanagementsystem.entity;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,13 +10,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ourusers")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EntityScan(basePackages = "com.ashville.usermanagementsystem.entity")
-public class OurUsers implements UserDetails {
+public class OurUsers  {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,29 +45,10 @@ public class OurUsers implements UserDetails {
     @JoinColumn(name = "dept_id", referencedColumnName = "departmentId")
     private Department department;
 
-   @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
-    }
 
-    public String getUsername() {
-        return email;
-    }
 
     // Default constructor
-    public OurUsers() {}
 
-    // Constructor with fields
-    public OurUsers(Integer userId, String email, String password, String name, String mobile, String city, String role, Department department) {
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.mobile = mobile;
-        this.city = city;
-        this.role = role;
-        this.department = department;
-    }
 
     public Integer getUserId() {
         return userId;

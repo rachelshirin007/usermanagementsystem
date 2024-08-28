@@ -1,64 +1,50 @@
 package com.ashville.usermanagementsystem.controller;
 
+import com.ashville.usermanagementsystem.DTO.DepartmentDTO;
 import com.ashville.usermanagementsystem.DTO.RequestResponse;
-import com.ashville.usermanagementsystem.entity.Department;
-import com.ashville.usermanagementsystem.entity.OurUsers;
-import com.ashville.usermanagementsystem.repository.DepartmentRepository;
-import com.ashville.usermanagementsystem.services.UserManagementService;
+import com.ashville.usermanagementsystem.services.DepartmentServImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping("/departments")
 public class DepartmentController {
 
     @Autowired
-    private UserManagementService userManagementService;
+    private DepartmentServImpl departmentServImpl;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-
-    // Create a new department
-    @PostMapping("/admin/depts")
-    public ResponseEntity<RequestResponse> registerDepts(@RequestBody RequestResponse res) {
-        System.out.println("=============in registerDepts===============");
-
-        return ResponseEntity.ok(userManagementService.registerDept(res));
+    @PostMapping("/create-dept")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RequestResponse> createDepartment(@RequestBody DepartmentDTO departmentDTO){
+        return ResponseEntity.ok(departmentServImpl.registerDept(departmentDTO));
     }
 
-    @GetMapping("/admin/get-all-depts")
-    public ResponseEntity<RequestResponse> getAllDepts() 
-    {
-        System.out.println("=============in getAllDepts===============");
-
-        return ResponseEntity.ok(userManagementService.getAllDepts());
+    @GetMapping("/get-all-depts")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RequestResponse> getAllDepartment(){
+        return ResponseEntity.ok(departmentServImpl.getAllDepts());
     }
 
-    // Get all users by department ID
-    @GetMapping("/admin/depts/{id}/users")
-    public List<OurUsers> getUsersByDepartmentId(@PathVariable Integer id) {
-        return departmentRepository.findByDepartmentId(id);
+    @PutMapping("/update-dept/{deptId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RequestResponse> updateDept(@PathVariable Integer deptId, @RequestBody DepartmentDTO departmentDTO) throws NotFoundException{
+        return ResponseEntity.ok(departmentServImpl.updateDept(deptId, departmentDTO));
     }
 
-    // Update department
-    @PutMapping("/admin/depts/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable Integer id, @RequestBody Department departmentDetails) {
-        Department department = departmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Department not found"));
-        department.setDeptName(departmentDetails.getDeptName());
-        Department updatedDepartment = departmentRepository.save(department);
-        return ResponseEntity.ok(updatedDepartment);
+    @DeleteMapping("/delete-dept/{deptId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RequestResponse> deleteDept(@PathVariable Integer deptId) throws NotFoundException{
+        return ResponseEntity.ok(departmentServImpl.deleteDepartment(deptId));
     }
 
-    // Delete department
-    @DeleteMapping("/admin/depts/{id}")
-    public ResponseEntity<?> deleteDepartment(@PathVariable Integer id) {
-        departmentRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    @GetMapping("/get-dept-by-id/{deptId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<RequestResponse> getDeptById(@PathVariable Integer deptId) throws NotFoundException{
+        return ResponseEntity.ok(departmentServImpl.getDepartmentById(deptId));
     }
 }

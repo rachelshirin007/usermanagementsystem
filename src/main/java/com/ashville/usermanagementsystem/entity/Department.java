@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 public class Department {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer departmentId;
 
     @Column(nullable = false, unique = true)

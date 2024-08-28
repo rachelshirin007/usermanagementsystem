@@ -1,16 +1,16 @@
 package com.ashville.usermanagementsystem.controller;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ashville.usermanagementsystem.DTO.LoginRequestDTO;
 import com.ashville.usermanagementsystem.DTO.RequestResponse;
+import com.ashville.usermanagementsystem.DTO.UserDTO;
 import com.ashville.usermanagementsystem.entity.OurUsers;
-import com.ashville.usermanagementsystem.services.OurUserDetailsService;
-import com.ashville.usermanagementsystem.services.UserManagementService;
+import com.ashville.usermanagementsystem.services.UserServImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,28 +24,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UserManagementController {
     
     @Autowired
-    private UserManagementService userManagementService;
+    private UserServImpl userManagementService;
 
-    @Autowired
-    private OurUserDetailsService ourUserDetailsService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<RequestResponse> register(@RequestBody RequestResponse res) {
+    public ResponseEntity<RequestResponse> register(@RequestBody UserDTO userdto) {
         
-        return ResponseEntity.ok(userManagementService.register(res));
+        return ResponseEntity.ok(userManagementService.registerUser(userdto));
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<RequestResponse> login(@RequestBody RequestResponse res) {
+    public ResponseEntity<RequestResponse> login(@RequestBody LoginRequestDTO logindto) {
         
-        return ResponseEntity.ok(userManagementService.login(res));
+        return ResponseEntity.ok(userManagementService.loginUser(logindto));
     }
-    
+   /* 
     @PostMapping("/auth/refresh")
     public ResponseEntity<RequestResponse> refreshToken(@RequestBody RequestResponse res) {
         
         return ResponseEntity.ok(userManagementService.refreshToken(res));
-    }
+    } */
 
     @GetMapping("/admin/get-all-users")
     public ResponseEntity<RequestResponse> getAllUsers() 
@@ -79,13 +77,5 @@ public class UserManagementController {
         return ResponseEntity.ok(userManagementService.deleteUser(userId));
     }
     
-    @GetMapping("/department/{departmentId}")
-    public List<OurUsers> getUsersByDepartment(@PathVariable Integer departmentId) {
-        return ourUserDetailsService.getUsersByDepartmentId(departmentId);
-    }
-
-    @DeleteMapping("/department/{departmentId}")
-    public void deleteUsersByDepartment(@PathVariable Integer departmentId) {
-        ourUserDetailsService.deleteUsersByDepartmentId(departmentId);
-    }
+    
 }

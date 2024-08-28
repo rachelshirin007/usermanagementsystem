@@ -20,8 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.ashville.usermanagementsystem.services.OurUserDetailsService;
-
 
 @Configuration
 @Service
@@ -29,7 +27,7 @@ import com.ashville.usermanagementsystem.services.OurUserDetailsService;
 public class SecurityConfig implements UserDetailsService {
 
     @Autowired
-    private OurUserDetailsService ourUserDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
@@ -42,6 +40,7 @@ public class SecurityConfig implements UserDetailsService {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/auth/**", "/public/**").permitAll()
                 .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                .requestMatchers("/departments/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/user/**").hasAnyAuthority("USER")
                 .requestMatchers("/adminuser/**").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated())
@@ -57,9 +56,9 @@ public class SecurityConfig implements UserDetailsService {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        System.out.println("=============ourUserDetailsService==============="+ourUserDetailsService);
+        System.out.println("=============ourUserDetailsService==============="+customUserDetailsService);
 
-        daoAuthenticationProvider.setUserDetailsService(ourUserDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
