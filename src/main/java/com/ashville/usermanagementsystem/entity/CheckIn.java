@@ -2,11 +2,9 @@ package com.ashville.usermanagementsystem.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Entity
 @Table(name = "checkin")
-@EntityScan(basePackages = "com.ashville.usermanagementsystem.entity")
 public class CheckIn {
 
     @Id

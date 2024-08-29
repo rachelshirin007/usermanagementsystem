@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.ashville.usermanagementsystem.services.CheckInServiceImpl;
 
 @RestController
-@RequestMapping("/checkin")
+@RequestMapping("/adminuser/checkin")
 public class CheckInController {
 
     @Autowired

@@ -1,6 +1,5 @@
 package com.ashville.usermanagementsystem.entity;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityScan(basePackages = "com.ashville.usermanagementsystem.entity")
 public class OurUsers  {
     
     @Id
@@ -37,9 +35,6 @@ public class OurUsers  {
     private String mobile;
     private String city;
     private String role;
-    // Mapping dept_id as a separate field but not for insert/update
-    //@Column(name = "dept_id", insertable = false, updatable = false)
-    //private Integer deptId;
 
     @ManyToOne
     @JoinColumn(name = "dept_id", referencedColumnName = "departmentId")

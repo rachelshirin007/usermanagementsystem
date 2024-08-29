@@ -3,21 +3,22 @@ package com.ashville.usermanagementsystem.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "departments")
-@EntityScan(basePackages = "com.ashville.usermanagementsystem.entity")
 public class Department {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer departmentId;
 
     @Column(nullable = false, unique = true)
     private String deptName;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<OurUsers> users;
 
     // Constructors

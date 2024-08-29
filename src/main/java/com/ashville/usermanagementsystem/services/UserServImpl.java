@@ -2,7 +2,6 @@ package com.ashville.usermanagementsystem.services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,8 +30,6 @@ public class UserServImpl implements UserDetailsService{
     @Autowired
     private JWTUtils jwtUtils;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,6 +45,7 @@ public class UserServImpl implements UserDetailsService{
         user.setCity(userReg.getCity());
         user.setRole(userReg.getRole());
         user.setMobile(userReg.getMobile());
+        user.setDepartment(userReg.getDepartment());
         usersRepo.save(user);
         return RequestResponse.builder()
                 .statusCode(200)
@@ -178,6 +176,8 @@ public class UserServImpl implements UserDetailsService{
                 }
                 System.out.println("Now saving to User entity");
                 OurUsers savedUser = usersRepo.save(existingUser);
+                System.out.println("saved user" + savedUser);
+
                 return RequestResponse.builder()
                 .users(savedUser)
                 .statusCode(200)

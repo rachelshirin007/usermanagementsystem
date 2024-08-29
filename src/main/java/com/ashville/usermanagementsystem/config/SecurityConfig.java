@@ -48,7 +48,6 @@ public class SecurityConfig implements UserDetailsService {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-            System.out.println("=============jwtAuthFilter===============" + jwtAuthFilter);
 
             return httpSecurity.build();
     }
@@ -56,7 +55,6 @@ public class SecurityConfig implements UserDetailsService {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        System.out.println("=============ourUserDetailsService==============="+customUserDetailsService);
 
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());

@@ -10,10 +10,12 @@ import com.ashville.usermanagementsystem.DTO.LoginRequestDTO;
 import com.ashville.usermanagementsystem.DTO.RequestResponse;
 import com.ashville.usermanagementsystem.DTO.UserDTO;
 import com.ashville.usermanagementsystem.entity.OurUsers;
+import com.ashville.usermanagementsystem.services.TokenBlacklistService;
 import com.ashville.usermanagementsystem.services.UserServImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,9 @@ public class UserManagementController {
     
     @Autowired
     private UserServImpl userManagementService;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
 
     @PostMapping("/auth/register")
@@ -77,5 +82,11 @@ public class UserManagementController {
         return ResponseEntity.ok(userManagementService.deleteUser(userId));
     }
     
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        tokenBlacklistService.addTokenToBlacklist(token);
+        return ResponseEntity.ok("Logout successful, token invalidated.");
+    }
     
 }

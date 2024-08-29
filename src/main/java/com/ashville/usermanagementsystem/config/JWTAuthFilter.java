@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.ashville.usermanagementsystem.services.JWTUtils;
+import com.ashville.usermanagementsystem.services.TokenBlacklistService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,25 +29,29 @@ public class JWTAuthFilter extends OncePerRequestFilter{
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException{
         final String authHeader = request.getHeader("Authorization");
         final String jwtToken;
         final String userEmail;
-        System.out.println("=============in doFilterInterval===============");
 
         if(authHeader == null || authHeader.isBlank()){
             filterChain.doFilter(request, response);
-            System.out.println("=============request in JWTAuthFilter==============="+request);
-            System.out.println("=============response in JWTAuthFilter==============="+response);
-
-
             return;
         }
 
         jwtToken = authHeader.substring(7);
+
+        // Check if the token is blacklisted
+        if (tokenBlacklistService.isTokenBlacklisted(jwtToken)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         userEmail = jwtUtils.getUsernameFromToken(jwtToken);
-        System.out.println("=============userEmail===============" + userEmail);
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
 
@@ -56,11 +61,9 @@ public class JWTAuthFilter extends OncePerRequestFilter{
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                System.out.println("=============token==============="+ token);
 
                 securityContext.setAuthentication(token);
                 SecurityContextHolder.setContext(securityContext);
-                System.out.println("=============securityContext==============="+securityContext);
 
             }
         }
